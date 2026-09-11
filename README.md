@@ -2,6 +2,12 @@ Creator: Xinran Ma
 
 More resources like this on: designwithai.co
 
+> **This skill has moved.** Its canonical home is now the
+> [skills library](https://github.com/xinran-dwi/skills/tree/main/design-sandbox-setup),
+> alongside its companion [`design-sandbox-verify`](https://github.com/xinran-dwi/skills/tree/main/design-sandbox-verify).
+> This repo is kept so existing clones keep working, and `SKILL.md` here is kept in sync —
+> but new installs should use the library, which is where updates land first.
+
 # design-sandbox-setup
 
 ## What it is
@@ -21,7 +27,8 @@ More resources like this on: designwithai.co
 ### Install (one time)
 
 ```bash
-git clone https://github.com/xinran-dwi/design-sandbox-setup.git ~/.claude/skills/design-sandbox-setup
+git clone https://github.com/xinran-dwi/skills.git
+mv skills/design-sandbox-setup ~/.claude/skills/
 ```
 
 Restart Claude Code.

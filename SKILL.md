@@ -41,7 +41,17 @@ First, work out whether the design system installs as its own package: look at `
 - Use shadcn/ui as a base and theme it to match the product's design system.
 - If only Figma designs exist and no real component code, use the Figma MCP to convert the designs to code first.
 
-**Verify before moving on**: add a single button from the design system to the page, using its default look — nothing custom, nothing else on the page. Compare the rendered button against the design system's own documentation or screenshots for color, shape, weight, and radius accuracy. If it doesn't match, something is wrong with the install/copy — fix that now, before it's buried under three more phases of work built on top of it.
+**Verify before moving on**: add a single button from the design system to the page, using its default look — nothing custom, nothing else on the page.
+
+Then check it **automatically, against the design system's own token source** — not against its documentation, and not by eye. Docs and screenshots go stale; the installed package can't. Run the check yourself and report the result; it isn't homework for the user:
+
+1. Render the page and read the button's real computed values — `backgroundColor`, `color`, `borderRadius`, `height`, plus the page background — via `getComputedStyle()`.
+2. Convert each to the notation the design system stores (usually hex) and **grep the installed package for that literal value** to find the token it belongs to (e.g. `grep -rn '3d71d9' node_modules/<pkg>/…` landing on `blueDarkMain: "#3d71d9"`).
+3. Report each as a pass only when a rendered value traces to a real named token. A value that appears nowhere in the package is the failure signal — it means something is falling back to a browser default or an unthemed stylesheet.
+
+This is worth doing exactly rather than approximately, because "close enough" here is invisible and compounds: a missing theme provider, a stylesheet that never loaded, or a font that 404s will each produce a page that looks plausible and measures wrong. Every screen built afterward inherits it, and any later fidelity check is then measuring the wrong baseline.
+
+If a value doesn't trace to a token, something is wrong with the install/copy — fix that now, before it's buried under three more phases of work built on top of it. Assets are the usual culprit: many design systems expect the host app to serve their icons and fonts, so check for 404s in the console before assuming the package is at fault.
 
 ---
 
@@ -87,6 +97,6 @@ This skill deliberately stops after Phase 4 (the article's Steps 1–4). It does
 
 - An embedded AI chat panel, an inspect/click-to-reference tool, a variant switcher, or a share/tunnel feature (the article's Step 5 — optional UX helpers on top of the sandbox).
 - A "Custom UI" escape-hatch toggle for when the design system genuinely can't support what's being explored (the article's Step 6).
-- Meta-skills like `sandbox-check` or `index-audit` for verifying or maintaining a sandbox after it's built (the article's Step 7).
+- Meta-skills like `sandbox-check` or `index-audit` for verifying or maintaining a sandbox after it's built (the article's Step 7) — **except** fidelity-checking, which is now covered by the companion skill [[design-sandbox-verify]]: once Phase 4 is done, run it to check the recreated screen against the real thing (not just a screenshot) and close any gaps found.
 
 That's a deliberate scope boundary, not an oversight — treat any of the above as a separate follow-up, not something to reach for mid-run here.
